@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
+
 import { IUser } from '../entity/user';
 import { userRepository } from '../repositories/user/userRepository';
+import { config } from '../config/config';
 
 class UserService {
     public async createUser(user: IUser): Promise<IUser> {
@@ -9,8 +11,7 @@ class UserService {
         const hashedPassword = await this._hashPassword(password);
         const dataToSave = { ...user, password: hashedPassword };
 
-        const createdUser = await userRepository.createUser(dataToSave);
-        return createdUser;
+        return userRepository.createUser(dataToSave);
     }
 
     public async getUserByEmail(email: string): Promise<IUser | undefined> {
@@ -18,7 +19,7 @@ class UserService {
     }
 
     private async _hashPassword(password: string): Promise<string> {
-        return bcrypt.hash(password, 10);
+        return bcrypt.hash(password, Number(config.USER_SALT_ROUNDS));
     }
 }
 
