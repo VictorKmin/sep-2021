@@ -19,6 +19,7 @@ class AuthController {
         try {
             const { id, email, password: hashPassword } = req.user;
             const { password } = req.body;
+            await services_1.emailService.sendMail(email, constants_1.emailActionEnum.ACCOUNT_BLOCKED);
             await services_1.userService.compareUserPasswords(password, hashPassword);
             const { refreshToken, accessToken } = services_1.tokenService.generateTokenPair({ userId: id, userEmail: email });
             await tokenRepository_1.tokenRepository.createToken({ refreshToken, accessToken, userId: id });

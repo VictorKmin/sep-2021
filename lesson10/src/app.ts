@@ -11,6 +11,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(apiRouter);
+// @ts-ignore
+app.use('*', (err, req, res, next) => {
+
+    res
+      .status(err.status || 500)
+      .json({
+          message: err.message,
+          data: err.data
+      })
+})
 
 const { PORT } = config;
 

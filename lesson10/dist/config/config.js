@@ -14,5 +14,7 @@ exports.config = {
     EXPIRES_IN_ACCESS: process.env.EXPIRES_IN_ACCESS,
     EXPIRES_IN_REFRESH: process.env.EXPIRES_IN_REFRESH,
     USER_SALT_ROUNDS: process.env.USER_SALT_ROUNDS,
+    NO_REPLY_EMAIL: process.env.NO_REPLY_EMAIL,
+    NO_REPLY_EMAIL_PASSWORD: process.env.NO_REPLY_EMAIL_PASSWORD,
 };
 //# sourceMappingURL=config.js.map

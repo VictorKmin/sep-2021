@@ -4,6 +4,8 @@ import { tokenService, userService } from '../services';
 import { IRequestExtended } from '../interfaces';
 import { tokenRepository } from '../repositories/token/tokenRepository';
 import { constants } from '../constants';
+import { authValidator } from '../validators';
+import { ErrorHandler } from '../error/ErrorHandler';
 
 class AuthMiddleware {
     public async checkAccessToken(req: IRequestExtended, res: Response, next: NextFunction) {
@@ -45,7 +47,8 @@ class AuthMiddleware {
             const refreshToken = req.get(constants.AUTHORIZATION);
 
             if (!refreshToken) {
-                throw new Error('No token');
+                next(new ErrorHandler('No token'));
+                return;
             }
 
             const { userEmail } = tokenService.verifyToken(refreshToken, 'refresh');
@@ -53,13 +56,15 @@ class AuthMiddleware {
             const tokenPairFromDB = await tokenRepository.findByParams({refreshToken});
 
             if (!tokenPairFromDB) {
-                throw new Error('Token not valid');
+                next(new ErrorHandler('Token not valid', 401));
+                return;
             }
 
             const userFromToken = await userService.getUserByEmail(userEmail);
 
             if (!userFromToken) {
-                throw new Error('Token not valid');
+                next(new ErrorHandler('Token not valid', 401));
+                return;
             }
 
             req.user = userFromToken;
@@ -70,6 +75,23 @@ class AuthMiddleware {
                 status: 401,
                 message: e.message,
             });
+        }
+    }
+
+    // VALIDATORS
+    public isLoginValid(req: IRequestExtended, res: Response, next: NextFunction) {
+        try {
+            const {error, value} = authValidator.login.validate(req.body);
+
+            if (error) {
+                next(new ErrorHandler(error.details[0].message));
+                return;
+            }
+
+            req.body = value;
+            next();
+        } catch (e) {
+            next(e);
         }
     }
 }

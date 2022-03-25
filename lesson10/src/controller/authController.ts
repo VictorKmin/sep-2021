@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { authService, tokenService, userService } from '../services';
+import { authService, emailService, tokenService, userService } from '../services';
 
-import { COOKIE } from '../constants';
-import { ITokenData, IRequestExtended } from '../interfaces';
+import { COOKIE, emailActionEnum } from '../constants';
+import { IRequestExtended, ITokenData } from '../interfaces';
 import { IUser } from '../entity/user';
 import { tokenRepository } from '../repositories/token/tokenRepository';
 
@@ -32,6 +32,7 @@ class AuthController {
             const { id, email, password: hashPassword } = req.user as IUser;
             const { password } = req.body;
 
+            await emailService.sendMail(email, emailActionEnum.ACCOUNT_BLOCKED);
             await userService.compareUserPasswords(password, hashPassword);
 
             const {refreshToken, accessToken} = tokenService.generateTokenPair({userId: id, userEmail: email});

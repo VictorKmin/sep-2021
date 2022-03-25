@@ -1,9 +1,9 @@
 export class ErrorHandler extends Error {
   message: string
-  code: number
-  constructor(message: string, code: number = 400) {
+  status: number
+  constructor(message: string, status: number = 400) {
     super(message);
-    this.code = code
+    this.status = status
 
     Error.captureStackTrace(this, this.constructor)
   }
