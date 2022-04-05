@@ -3,6 +3,7 @@ global.rootDir = __dirname;
 
 import 'reflect-metadata';
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import { createConnection } from 'typeorm';
 
 import { apiRouter } from './router/apiRouter';
@@ -11,6 +12,7 @@ import { config } from './config/config';
 
 const app = express();
 
+app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

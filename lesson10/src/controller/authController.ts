@@ -1,22 +1,51 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { authService, emailService, tokenService, userService } from '../services';
-
-import { COOKIE, emailActionEnum } from '../constants';
-import { IRequestExtended, ITokenData } from '../interfaces';
+import { authService, emailService, s3Service, tokenService, userService } from '../services';
+import { emailActionEnum } from '../constants';
+import { IRequestExtended } from '../interfaces';
 import { IUser } from '../entity/user';
 import { tokenRepository } from '../repositories/token/tokenRepository';
+import { UploadedFile } from 'express-fileupload';
 
 class AuthController {
-    public async registration(req: Request, res: Response): Promise<Response<ITokenData>> {
-        const data = await authService.registration(req.body);
-        res.cookie(
-            COOKIE.nameRefreshToken,
-            data.refreshToken,
-            { maxAge: COOKIE.maxAgeRefreshToken, httpOnly: true },
-        );
+    public async registration(req: Request, res: Response, next: NextFunction): Promise<void> {
+        //{
+        //     "firstName": "Dima",
+        //     "lastName": "Petriv",
+        //     "phone": "+380676767674",
+        //     "password": "1234567890",
+        //     "email": "email33@email.com",
+        //     "age": 95
+        // }
 
-        return res.json(data);
+        try {
+            const { email } = req.body;
+            const avatar = req.files?.avatar as UploadedFile;
+
+            const userFromDb = await userService.getUserByEmail(email);
+
+            if (userFromDb) {
+                throw new Error(`User with email: ${email} already exists`);
+            }
+
+            const createdUser = await userService.createUser(req.body);
+
+            if (avatar) {
+                const sendData = await s3Service.uploadFile(avatar, 'user', createdUser.id);
+
+                console.log('___________________________________________________');
+                console.log(sendData.Location);
+                console.log('___________________________________________________');
+
+                // UPDATE USER
+            }
+
+            const tokenData = await authService.registration(createdUser);
+
+            res.json(tokenData);
+        } catch (e) {
+            next(e)
+        }
     }
 
     async logout(req: IRequestExtended, res: Response): Promise<Response<string>> {
