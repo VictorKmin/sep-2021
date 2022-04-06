@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<button id="sendMessage">SEND</button>
+<button id="join1">Join room 1</button>
+<button id="join2">Join room 2</button>
+
+<script>
+    const socket = io('http://localhost:5500', { query: `userId=8&accessToken=754845` });
+
+    const btn = document.getElementById('sendMessage');
+    const join1 = document.getElementById('join1');
+    const join2 = document.getElementById('join2');
+
+    btn.onclick = () => {
+      socket.emit('message:create', {message: 'HELLO WORLD'});
+    }
+
+    join1.onclick = () => {
+      socket.emit('join_room', {id: 1});
+    }
+
+    join2.onclick = () => {
+      socket.emit('join_room', {id: 2});
+    }
+
+
+    socket.on('message:get-all', (data) => {
+      console.log('____________________________');
+      console.log(data);
+      console.log('____________________________');
+    })
+
+    socket.on('user_join_room', (data) => {
+      console.log('-=-=-=-=-=-=-=-=-=-=');
+      console.log(data);
+      console.log('-=-=-=-=-=-=-=-=-=-=');
+    })
+
+</script>
+
+</body>
+</html>
