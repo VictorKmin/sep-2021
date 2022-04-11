@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { socketController } from './controller/socket.controller';
 
 // @ts-ignore
@@ -62,6 +63,8 @@ io.on('connection', (socket: any) => {
 app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+mongoose.connect('mongodb://localhost:27017/sep2021');
 
 app.use(apiRouter);
 // @ts-ignore
