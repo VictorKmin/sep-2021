@@ -1,0 +1,90 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Sep-2021",
+    "description": "This is test doc",
+    "version": "0.1",
+    "contact": {
+      "email": "victor.fzs10@gmail.com",
+      "name": "Viktor Kmin"
+    }
+  },
+  "paths": {
+    "/auth": {
+      "post": {
+        "description": "Login",
+        "operationId": "auth",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "pattern": "Bearar ACCESS_TOKEN",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "type": "string",
+            "name": "email",
+            "in": "body",
+            "pattern": "email@email.com",
+            "description": "THUS IS EMAIL",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Password. Minimum 8 symbold",
+            "in": "body",
+            "pattern": "Hell0_wOrld"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string",
+                  "example": "67sefhsdlk"
+                },
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "Viktor"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Successfully login response"
+          },
+          "400": {
+            "description": "Unify error",
+            "schema": {
+              "$ref": "#/definitions/errorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "errorResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string",
+          "example": "Something went worng",
+          "description": "Standard error response"
+        }
+      }
+    }
+  }
+}

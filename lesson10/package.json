@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "rimraf dist && copyfiles -f src/email-templates/*.* dist/email-templates/ && tsc-watch --onSuccess 'npm run watch:server'",
+    "start": "rimraf dist && copyfiles -f src/email-templates/*.* dist/email-templates/ && copyfiles -f src/docs/*.json dist/docs/ && tsc-watch --onSuccess 'npm run watch:server'",
     "watch:server": "nodemon './src/app.ts' --watch './src'",
     "lint": "eslint --cache --ext .js,.ts src",
     "lint:fix": "npm run lint -- --fix",
@@ -35,6 +35,7 @@
     "pug": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.4.1",
+    "swagger-ui-express": "^4.3.0",
     "typeorm": "^0.2.43",
     "typescript": "^4.5.5",
     "uuid": "^8.3.2"
@@ -52,6 +53,7 @@
     "@types/node-cron": "^3.0.1",
     "@types/nodemailer": "^6.4.4",
     "@types/socket.io": "^3.0.2",
+    "@types/swagger-ui-express": "^4.1.3",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
